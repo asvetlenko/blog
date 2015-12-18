@@ -2,9 +2,19 @@
  * Created by alexey.svetlenko on 18.12.2015.
  */
 
-var user = require('./user');
+// module.exports = exports = this
 
-var vasya = new user.User('Vasya');
-var peter = new user.User('Peter');
+var User = require('./user');
 
-vasya.hello(peter);
+function run() {
+    var vasya = new User('Vasya');
+    var peter = new User('Peter');
+
+    vasya.hello(peter);
+}
+
+if (module.parent) {
+    exports.run = run;
+} else {
+    run();
+}

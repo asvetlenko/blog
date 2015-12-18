@@ -2,7 +2,8 @@
  * Created by alexey.svetlenko on 18.12.2015.
  */
 
-var phrases = require('./ru');
+var db = require('../db');
+db.connect();
 
 function User(name) {
     this.name = name;
@@ -10,13 +11,21 @@ function User(name) {
 
 User.prototype.hello = function (who) {
     // ...
-    console.log(phrases.Hello + ', ' + who.name);
+    console.log(db.getPhrase('Hello') + ', ' + who.name);
 };
 
 // ...
 
-console.log('user.js is required!');
+/*
+we can know: module.exports = exports = this
+or
+    module.exports.User = User;
+or
+    exports.User = User;
+or
+    this.User = User;
+*/
 
-exports.User = User;
+// was exports.User = User;
 
-console.log(module);
+module.exports = User;
