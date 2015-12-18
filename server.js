@@ -4,6 +4,9 @@
 
 // module.exports = exports = this
 
+var db = require('./db');
+db.connect();
+
 var User = require('./user');
 
 function run() {
@@ -11,6 +14,8 @@ function run() {
     var peter = new User('Peter');
 
     vasya.hello(peter);
+
+    console.log(db.getPhrase('Run successful'));
 }
 
 if (module.parent) {
