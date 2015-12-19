@@ -2,8 +2,8 @@
  * Created by alexey.svetlenko on 18.12.2015.
  */
 
-var db = require('../db');
-
+var db = require('db');
+var logger = require('logger')(module);
 
 function User(name) {
     this.name = name;
@@ -11,7 +11,7 @@ function User(name) {
 
 User.prototype.hello = function (who) {
     // ...
-    console.log(db.getPhrase('Hello') + ', ' + who.name);
+    logger.log(db.getPhrase('Hello') + ', ' + who.name);
 };
 
 // ...
