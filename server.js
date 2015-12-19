@@ -4,10 +4,11 @@
 
 // module.exports = exports = this
 
-var logger = require('logger')(module);
+var logger = require('logger1984')(module);
 var db = require('db');
 db.connect();
 
+logger.log('My new logger');
 var User = require('./user');
 
 function run() {
