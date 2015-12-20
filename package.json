@@ -1,7 +1,0 @@
-{
-  "name": "bitbacket",
-  "version": "0.8.1",
-  "dependencies": {
-    "express": ">=4.13.3"
-  }
-}
