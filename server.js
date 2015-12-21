@@ -4,8 +4,11 @@
 
 // http://127.0.0.1/echo?message=Hello -> Hello
 
+// using supervisor: "C:\Users\alexey.svetlenko\AppData\Roaming\npm\supervisor.cmd" instead "node"
+
 var url = require('url');
 var http = require('http');
+
 
 var server = new http.Server(function (req, res) {
     //res.writeHead(200, {'Content-Type': 'text/html; charset=UTF-8'});
@@ -26,4 +29,5 @@ var server = new http.Server(function (req, res) {
         res.statusCode = 404;
         res.end('Page not found');
     }
+
 }).listen(1337, '127.0.0.1');
