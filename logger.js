@@ -10,7 +10,7 @@ module.exports = function (module) {
 
 function makeLogger(path) {
     var transports = [];
-    if (path.match(/request.js&/)) {
+    if (path.indexOf('request.js')) {
         transports.push(new winston.transports.Console({
             timestamp: true, // function(){ return new Date().toString() }
             colorize: true,
