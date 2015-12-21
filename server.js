@@ -12,7 +12,6 @@ var server = new http.Server(function (req, res) {
     //res.end('Hellow, world!');
 
     console.log(req.headers);
-
     var urlParsed = url.parse(req.url, true);
     if (urlParsed.pathname === '/echo' && urlParsed.query.message) {
         res.writeHead(200, {
