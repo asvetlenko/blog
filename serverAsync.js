@@ -10,12 +10,17 @@ var http = require('http'),
 var server = new http.Server();
 
 server.on('request', function (req, res) {
-    var info;
     if (req.url === '/') {
-        info = fs.readFileSync('index.html'); // fs.feadFileSync
-        res.end(info);
-    } else if (req.url === '/now') {
-        res.end(new Date().toString());
+        fs.readFile('index.html', function (err, info) {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                res.end("Server error!!!!");
+                return;
+            }
+
+            res.end(info);
+        });
     }
 });
 
