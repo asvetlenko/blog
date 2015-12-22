@@ -54,11 +54,49 @@ function sendFileSafe(filePath, res) {
             return;
         }
 
-        sendFile(filePath, res);
+        sendFile3(filePath, res);
     });
 }
 
-function sendFile(filePath, res) {
+function sendFile3(filePath, res) {
+    var file = new mFs.ReadStream(filePath);
+    file.pipe(res);
+    //file.pipe(process.stdout);
+
+    file.on('open', function () {
+        console.log('EVENT open');
+    }).on('end', function () {
+        console.log('EVENT end');
+    }).on('close', function () {
+        console.log('EVENT close');
+    }).on('error', function (err) {
+        res.statusCode = 404;
+        if (err.code === 'ENOENT') {
+            res.end('File not found');
+            return;
+        }
+        res.end('Read file error');
+    });
+
+    res.on('close', function () { // connection was broken
+        file.destroy();
+        console.log('responce was closed emergency');
+    });
+}
+
+function sendFile1(filePath, res) {
+    if (err) {
+        res.statusCode = 404;
+        res.end('Read file error');
+        return;
+    }
+
+    var mime = mMime.lookup(filePath); // npm install mime
+    res.setHeader('Content-Type', mime + '; charset=utf-8'); // text/html image/jpeg
+    res.end(content);
+}
+
+function sendFile2(filePath, res) {
     var file = new mFs.ReadStream(filePath);
     file.on('readable', write);
 
@@ -91,3 +129,4 @@ function sendFile(filePath, res) {
         }
     });
 }
+

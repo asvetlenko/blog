@@ -5,7 +5,7 @@
 var fs = require('fs');
 
 // fs.ReadStream inheritance from stream.Readeble
-var stream = new fs.ReadStream(__filename + 1);
+var stream = new fs.ReadStream(__filename);
 
 stream.on('open', function () {
     console.log('EVENT open');
@@ -33,3 +33,5 @@ stream.on('error', function (err) {
         console.log('we have strange error:', err);
     }
 });
+
+//stream.destroy();
