@@ -71,4 +71,3 @@ function sendFile(filePath, res) {
         res.end(content);
     });
 }
-
