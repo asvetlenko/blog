@@ -2,38 +2,73 @@
  * Created by alexey.svetlenko on 21.12.2015.
  */
 
-var http = require('http');
+var mHttp = require('http'),
+    mUrl = require('url'),
+    mPath = require('path'),
+    mFs = require('fs'),
+    mMime = require('mime');
 
-var server = new http.Server();
+var ROOT = __dirname + '\\public';
 
-server.on('request', function (req, res) {
+mHttp.createServer(function (req, res) {
+    if (!checkAccsess(req)) {
+        res.statusCode = 403;
+        res.end('Tell me the secret to access!');
+        return;
+    }
 
-    //process.nextTick(function(){
-    //    req.on('readable', function(){
-    //        console.log('Should execute for near data 1!');
-    //        res.end('ok');
-    //    });
-    //});
+    sendFileSafe(mUrl.parse(req.url).pathname, res);
+}).listen(1337);
 
-    var part = 0;
-    setImmediate(function () {
-        console.log('Should execute for near data2');
-        res.end('ok');
-        });
+function checkAccsess(req) {
+    return mUrl.parse(req.url, true).query.secret === 'o_O';
+}
 
-});
+function sendFileSafe(filePath, res) {
+    try {
+        filePath = decodeURIComponent(filePath);
+    } catch (err) {
+        res.statusCode = 400;
+        res.end('Bad url');
+        return;
+    }
 
-server.listen(1337, '127.0.0.1');
+    if (filePath.indexOf('\0') !== -1) {
+        res.statusCode = 400;
+        res.end('Bad Request');
+        return;
+    }
 
-var timeoutRef = setTimeout(function () {
-    server.close();
-    //server.close(function(){ process.exit(); });
-    //server.close(function(){ clearInterval(intervalRef); });
-}, 2500);
+    filePath = mPath.normalize(mPath.join(ROOT, filePath));
 
-var intervalRef = setInterval(function () {
-    console.log('memory usage: ', process.memoryUsage());
-}, 1000);
+    if (filePath.indexOf(ROOT) !== 0) {
+        res.statusCode = 404;
+        res.end('Wrond file path');
+        return;
+    }
 
-intervalRef.unref();
-intervalRef.ref();
+    mFs.stat(filePath, function (err, stats) {
+        if (err || !stats.isFile()) {
+            res.statusCode = 404;
+            res.end('File not found');
+            return;
+        }
+
+        sendFile(filePath, res);
+    });
+}
+
+function sendFile(filePath, res) {
+    mFs.readFile(filePath, function (err, content) {
+        if (err) {
+            res.statusCode = 404;
+            res.end('Read file error');
+            return;
+        }
+
+        var mime = mMime.lookup(filePath); // npm install mime
+        res.setHeader('Content-Type', mime + '; charset=utf-8'); // text/html image/jpeg
+        res.end(content);
+    });
+}
+
