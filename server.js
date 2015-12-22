@@ -2,8 +2,6 @@
  * Created by alexey.svetlenko on 21.12.2015.
  */
 
-// http://127.0.0.1/echo?message=Hello -> Hello
-
 var http = require('http'),
     fs = require('fs');
 
@@ -25,3 +23,11 @@ server.on('request', function (req, res) {
 });
 
 server.listen(1337, '127.0.0.1');
+
+var timeoutRef = setTimeout(function () {
+    server.close();
+}, 2500);
+
+var intervalRef = setInterval(function () {
+    console.log('memory usage: ', process.memoryUsage());
+}, 1000);
