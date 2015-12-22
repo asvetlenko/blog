@@ -5,14 +5,18 @@
 // http://127.0.0.1/echo?message=Hello -> Hello
 
 var http = require('http'),
-//debug = require('debug')('server');
-    log = require('./logger')(module);
+    fs = require('fs');
 
 var server = new http.Server();
 
-server.on('request', require('./request'));
+server.on('request', function (req, res) {
+    var info;
+    if (req.url === '/') {
+        info = fs.readFileSync('index.html'); // fs.feadFileSync
+        res.end(info);
+    } else if (req.url === '/now') {
+        res.end(new Date().toString());
+    }
+});
 
 server.listen(1337, '127.0.0.1');
-
-//set DEBUG=server in command line
-log.info('Server is Running');
