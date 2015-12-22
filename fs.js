@@ -5,7 +5,7 @@
 var fs = require('fs');
 
 // fs.ReadStream inheritance from stream.Readeble
-var stream = new fs.ReadStream(__filename);
+var stream = new fs.ReadStream(__filename + 1);
 
 stream.on('open', function () {
     console.log('EVENT open');
@@ -27,5 +27,9 @@ stream.on('close', function () {
 
 stream.on('error', function (err) {
     console.log('EVENT error');
-    console.log('we have error:', err);
+    if (err.code === 'ENOENT') {
+        console.log('File not found: ', err.message);
+    } else {
+        console.log('we have strange error:', err);
+    }
 });
