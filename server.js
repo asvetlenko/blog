@@ -18,7 +18,7 @@ mHttp.createServer(function (req, res) {
     }
 
     sendFileSafe(mUrl.parse(req.url).pathname, res);
-}).listen(1337);
+}).listen(1338);
 
 function checkAccsess(req) {
     return mUrl.parse(req.url, true).query.secret === 'o_O';
@@ -59,15 +59,35 @@ function sendFileSafe(filePath, res) {
 }
 
 function sendFile(filePath, res) {
-    mFs.readFile(filePath, function (err, content) {
-        if (err) {
-            res.statusCode = 404;
-            res.end('Read file error');
-            return;
-        }
+    var file = new mFs.ReadStream(filePath);
+    file.on('readable', write);
 
-        var mime = mMime.lookup(filePath); // npm install mime
-        res.setHeader('Content-Type', mime + '; charset=utf-8'); // text/html image/jpeg
-        res.end(content);
+    function write() {
+        var fileContent = file.read(); // read data
+        if (fileContent && !res.write(fileContent)) {
+            file.removeListener('readable', write);
+
+            res.once('drain', function () { // we wait
+                file.on('readable', write);
+                write();
+            });
+        }
+    }
+
+    file.on('end', function () {
+        res.end();
+    });
+
+    file.on('close', function () {
+        res.end();
+    });
+
+    file.on('error', function (err) {
+        console.log('EVENT error');
+        if (err.code === 'ENOENT') {
+            console.log('File not found: ', err.message);
+        } else {
+            console.log('we have strange error:', err);
+        }
     });
 }
