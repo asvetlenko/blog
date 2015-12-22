@@ -2,38 +2,18 @@
  * Created by alexey.svetlenko on 21.12.2015.
  */
 
-var http = require('http');
+var fs = require('fs');
 
-var server = new http.Server();
-
-server.on('request', function (req, res) {
-
-    //process.nextTick(function(){
-    //    req.on('readable', function(){
-    //        console.log('Should execute for near data 1!');
-    //        res.end('ok');
-    //    });
-    //});
-
-    var part = 0;
-    setImmediate(function () {
-        console.log('Should execute for near data2');
-        res.end('ok');
-        });
-
+fs.readFile(__filename + 11, {encoding: 'utf-8'}, function (err, data) {
+    if (err) {
+        if (err.code === 'ENOENT') {
+            console.log('File not found.\n message: %s', err.message);
+        } else {
+            console.log(err);
+        }
+    } else {
+        console.log(data);
+        //console.log(data[0]);
+        //console.log(data.length);
+    }
 });
-
-server.listen(1337, '127.0.0.1');
-
-var timeoutRef = setTimeout(function () {
-    server.close();
-    //server.close(function(){ process.exit(); });
-    //server.close(function(){ clearInterval(intervalRef); });
-}, 2500);
-
-var intervalRef = setInterval(function () {
-    console.log('memory usage: ', process.memoryUsage());
-}, 1000);
-
-intervalRef.unref();
-intervalRef.ref();
