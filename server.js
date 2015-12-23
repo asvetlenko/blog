@@ -2,81 +2,27 @@
  * Created by alexey.svetlenko on 21.12.2015.
  */
 
-var http = require('http'),
-    fs = require('fs'),
-    chat = require('./chat');
+//node server.js port=3000
+//node server.js --port=3000
+//supervisor -- server.js --port=3000
+//set NODE_ENV=development
+//set NODE_ENV=production
 
+var http = require('http'),
+    argv = require('minimist')(process.argv.slice(2));
+
+console.log('process.argv: ', process.argv);
+console.log('argv: %s; port %s', argv, argv.port);
+
+console.log('proccess.env.HOMEPATH: ', process.env.HOMEPATH);
 
 http.createServer(function (req, res) {
-    switch (req.url) {
-        case '/':
-        {
-            sendFile('index.html', res);
-            break;
-        }
-        case '/subscribe':
-        {
-            chat.subscribe(req, res);
-            // ...
-            break;
-        }
-        case '/publish':
-        {
-            var body = '';
-            req.on('readable', function () {
-                    body += req.read();
-                })
-                .on('end', function () {
-                    try {
-                        body = JSON.parse(body);
-
-                        if (body.length > 1e4) {
-                            res.statusCode = 413;
-                            console.log('ERROR. ', 'Your message is too big for my little chat');
-                            res.end('Your message is too big for my little chat');
-
-                            return;
-                        }
-
-                    } catch (err) {
-                        res.statusCode = 400;
-                        res.end('Bad Request');
-                        console.log('ERROR. ', 'Bad Request');
-                        return;
-                    }
-
-                    chat.publish(body.message);
-                    console.log('messages was sended');
-                    res.end('ok');
-
-                });
-            break;
-        }
-        default:
-        {
-            res.statusCode = 404;
-            res.end('Not found');
-        }
+    var myMessage = '';
+    if (process.env.NODE_ENV === 'production') {
+        myMessage = 'optimization';
+    } else if (process.env.NODE_ENV === 'development') {
+        myMessage = 'external debugging information';
     }
-}).listen(3000);
 
-function sendFile(fileName, res) {
-    var fileStream = fs.createReadStream(fileName);
-    fileStream
-        .on('error', function () {
-            if (err.code === 'ENOENT') {
-                res.statusCode = 404;
-                res.end('File not found');
-                return;
-            }
-            res.statusCode = 500;
-            res.end('Read file error');
-        })
-        .pipe(res);
-
-
-    res.on('close', function () { // connection was broken
-        fileStream.destroy();
-        console.log('responce was closed emergency');
-    });
-}
+    res.end('The server is rinnign; ' + myMessage);
+}).listen(argv.port);
