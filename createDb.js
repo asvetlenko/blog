@@ -1,29 +1,23 @@
 /**
- * Created by we on 29-Dec-15.
+ * Created by we on 30-Dec-15.
  */
 
 //cd D:\alexey\MongoDB\Server\3.2\bin\
 //mongod.exe --dbpath "D:\alexey\MongoDB\db" -v
 
-var MongoClient = require('mongodb').MongoClient;
+var User = require('./models/user').User;
 
-// Connection URL
-var url = 'mongodb://localhost:27017/chat';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function (err, db) {
-    if (err) throw err;
+var user = new User({
+    username: "Tester2",
+    password: "secret"
+});
 
-    var collection = db.collection('test_insert');
-    collection.insert({a: 2}, function (err, doc) {
-        collection.count(function (err, count) {
-            console.log('coun = %s', count);
-        });
+user.save(function (err, user, affected) {
+    if (err) {
+        throw err;
+    }
 
-        // Locate all the entries using find
-        collection.find().toArray(function (err, results) {
-            console.dir(results);
-            //Let's close the db
-            db.close();
-        });
+    User.findOne({username: "Tester2"}, function (err, tester) {
+        console.log('tester: ', tester);
     });
 });
