@@ -5,8 +5,7 @@
 //cd D:\alexey\MongoDB\Server\3.2\bin\
 //mongod.exe --dbpath "D:\alexey\MongoDB\db" -v
 
-var MongoClient = require('mongodb').MongoClient
-    , assert = require('assert');
+var MongoClient = require('mongodb').MongoClient;
 
 // Connection URL
 var url = 'mongodb://localhost:27017/chat';
@@ -27,10 +26,4 @@ MongoClient.connect(url, function (err, db) {
             db.close();
         });
     });
-
-
-    //assert.equal(null, err);
-    //console.log("Connected correctly to server");
-    //
-    //db.close();
 });
