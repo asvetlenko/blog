@@ -6,42 +6,46 @@
 //mongod.exe --dbpath "D:\alexey\MongoDB\db" -v
 
 var mongooose = require('./common/mongoose'),
-    async = require('async'),
-    User = require('./models/user').User;
+    async = require('async');
 
-mongooose.connection.on('open', function () {
-    mongooose.connection.db.dropDatabase(function (err) {
-        if (err) {
-            throw err;
-        }
+mongooose.set('debug', true);
 
-        async.parallel([
-                function (callback) {
-                    var user = new User({username: 'Vasiliy', password: 'pi[i[ipi[i'});
-                    user.save(function (err, result) {
-                        callback(err, user);
-                    })
-                },
-                function (callback) {
-                    var user = new User({username: 'Peter', password: 'mimimi'});
-                    user.save(function (err, result) {
-                        callback(err, user);
-                    })
-                },
-                function (callback) {
-                    var user = new User({username: 'Admin', password: 'kikiki'});
-                    user.save(function (err, result) {
-                        callback(err, user);
-                    })
-                }],
-            function (err, results) {
-                if (err) {
-                    throw  err;
-                }
-                console.log('OK. Create users results:', results);
+async.series([open, dropDatabase, requireModels, createUsers], function (err, results) {
+    if (err) {
+        process.exit(255);
+        return;
+    }
 
-                mongooose.disconnect();
-            }
-        );
-    });
+    console.log('results: ', results);
+    mongooose.disconnect();
+    process.exit(0);
 });
+
+function open(callback) {
+    mongooose.connection.on('open', callback);
+}
+
+function dropDatabase(callback) {
+    mongooose.connection.db.dropDatabase(callback);
+}
+
+function requireModels(callback) {
+    require('./models/user');
+
+    async.each(Object.keys(mongooose.models), function (modelName, callback) {
+        mongooose.models[modelName].ensureIndexes(callback);
+    }, callback)
+}
+
+function createUsers(callback) {
+    var users = [
+        {username: 'Vasiliy', password: 'pi[i[ipi[i'},
+        {username: 'Peter', password: 'mimimi'},
+        {username: 'admin', password: 'kikiki'}
+    ];
+
+    async.each(users, function (userData, callback) {
+        var user = mongooose.models.User(userData);
+        user.save(callback)
+    }, callback);
+}
