@@ -9,5 +9,15 @@
         }
       }
     }
+  },
+  "session": {
+    "secret": "MyChildren",
+    "key": "sid",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "secure": false,
+      "maxAge": null
+    }
   }
 }
