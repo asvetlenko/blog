@@ -5,19 +5,22 @@
 //cd D:\alexey\MongoDB\Server\3.2\bin\
 //mongod.exe --dbpath "D:\alexey\MongoDB\db" -v
 
-var User = require('./models/user').User;
+var mongooose = require('./common/mongoose'),
+//async = require('async'),
+    User = require('./models/user').User;
 
-var user = new User({
-    username: "Tester2",
-    password: "secret"
-});
+console.log('first readyState: ', mongooose.connection.readyState);
 
-user.save(function (err, user, affected) {
-    if (err) {
-        throw err;
-    }
+mongooose.connection.on('open', function () {
+    console.log('connection open readyState: ', mongooose.connection.readyState);
 
-    User.findOne({username: "Tester2"}, function (err, tester) {
-        console.log('tester: ', tester);
+    mongooose.connection.db.dropDatabase(function (err) {
+        if (err) {
+            throw err;
+        }
+        console.log('OK');
+        mongooose.disconnect();
+
+        console.log('after disconnect readyState: ', mongooose.connection.readyState);
     });
 });
