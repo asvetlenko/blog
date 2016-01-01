@@ -6,21 +6,42 @@
 //mongod.exe --dbpath "D:\alexey\MongoDB\db" -v
 
 var mongooose = require('./common/mongoose'),
-//async = require('async'),
+    async = require('async'),
     User = require('./models/user').User;
 
-console.log('first readyState: ', mongooose.connection.readyState);
-
 mongooose.connection.on('open', function () {
-    console.log('connection open readyState: ', mongooose.connection.readyState);
-
     mongooose.connection.db.dropDatabase(function (err) {
         if (err) {
             throw err;
         }
-        console.log('OK');
-        mongooose.disconnect();
 
-        console.log('after disconnect readyState: ', mongooose.connection.readyState);
+        async.parallel([
+                function (callback) {
+                    var user = new User({username: 'Vasiliy', password: 'pi[i[ipi[i'});
+                    user.save(function (err, result) {
+                        callback(err, user);
+                    })
+                },
+                function (callback) {
+                    var user = new User({username: 'Peter', password: 'mimimi'});
+                    user.save(function (err, result) {
+                        callback(err, user);
+                    })
+                },
+                function (callback) {
+                    var user = new User({username: 'Admin', password: 'kikiki'});
+                    user.save(function (err, result) {
+                        callback(err, user);
+                    })
+                }],
+            function (err, results) {
+                if (err) {
+                    throw  err;
+                }
+                console.log('OK. Create users results:', results);
+
+                mongooose.disconnect();
+            }
+        );
     });
 });
