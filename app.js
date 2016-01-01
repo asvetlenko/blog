@@ -6,6 +6,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var HttpError = require('./error').HttpError;
 
 
 var routes = require('./routes/index');
@@ -24,6 +25,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(require('./middleware/middleware.js'));
 
 app.use('/', routes);
 app.use('/users', users);
@@ -52,6 +55,10 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
+    if (typeof err === 'number') { // next(404);
+        err = new HttpError(err);
+    }
+
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
