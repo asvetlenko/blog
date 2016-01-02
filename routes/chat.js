@@ -6,7 +6,9 @@ var router = require('express').Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('chat', {title: 'Express', body: '<h1>hello</h1>'});
+    res.render('chat', {
+        title: 'chat'
+    });
 });
 
 module.exports = router;

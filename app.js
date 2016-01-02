@@ -45,6 +45,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(require('./middleware/middleware.js'));
+app.use(require('./middleware/loadUser.js'));
 
 //app.use('/', routes);
 // route //app.use('/users', users);

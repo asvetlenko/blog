@@ -6,7 +6,10 @@ var router = require('express').Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('frontpage', {title: 'Express', body: '<h1>hello</h1>'});
+    res.render('frontpage', {
+        title: 'Express',
+        user: req.user
+    });
 });
 
 module.exports = router;
