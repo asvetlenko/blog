@@ -14,7 +14,8 @@ var mongoose = require('./common/mongoose');
 
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+// route //var users = require('./routes/users');
+
 
 var app = express();
 
@@ -36,17 +37,21 @@ app.use(session({
     , store: new MongoStore({mongooseConnection: mongoose.connection})
 })); //connect.sid
 
-app.use(function (req, res, next) {
-    req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
-    res.send("Visits: " + req.session.numberOfVisits);
-});
+//app.use(function (req, res, next) {
+//    req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
+//    res.send("Visits: " + req.session.numberOfVisits);
+//});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(require('./middleware/middleware.js'));
 
-app.use('/', routes);
-app.use('/users', users);
+//app.use('/', routes);
+// route //app.use('/users', users);
+//
+
+routes(app);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
