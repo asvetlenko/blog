@@ -4,5 +4,33 @@
 
 <p>How are you: <%= user.get('username') %></p>
 
+<div id="room">
+    <ul></ul>
+    <form>
+        <input class="form-control" autocomplete="off" autofocus placeholder="Message ....">
+    </form>
+</div>
+
+
+<script>
+    var socket = io.connect();
+    var form = $('#room form');
+    var ul = $('#room ul');
+
+    form.submit(function () {
+        var input = $(this).find(':input');
+        var text = input.val();
+        input.val('');
+
+        console.log('message client emit: ', text);
+        socket.emit('message', text);
+
+        return false;
+    });
+
+    socket.on('message', function (text) {
+        $('<li>', {text: text}).appendTo(ul);
+    });
+</script>
 
 <%- include('./layout/footer') %>
