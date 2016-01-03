@@ -93,11 +93,4 @@ function onListening() {
     log.info('Listening on ' + bind);
 }
 
-var io = require('socket.io')(server);
-
-io.on('connection', function (socket) {
-    socket.on('message', function (text, cb) {
-        socket.broadcast.emit('message', text);
-        cb({my: 123});
-    });
-});
+require('./../socket')(server);
