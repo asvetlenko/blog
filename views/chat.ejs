@@ -23,7 +23,9 @@
         input.val('');
 
         console.log('message client emit: ', text);
-        socket.emit('message', text);
+        socket.emit('message', text, function (data) {
+            $('<li>', {text: text}).appendTo(ul);
+        });
 
         return false;
     });
