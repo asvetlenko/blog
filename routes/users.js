@@ -1,4 +1,4 @@
-async = require('async');
+var async = require('async');
 var express = require('express'),
     mongooose = require('./../common/mongoose'),
     User = require('./../models/user').User,

@@ -30,11 +30,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
+var sessionStore = require('./common/sessionStore.js');
+
 app.use(session({
     secret: config.get('session:secret'),
     key: config.get('session:key'),
-    cookie: config.get('session:cookie')
-    , store: new MongoStore({mongooseConnection: mongoose.connection})
+    cookie: config.get('session:cookie'),
+    store: sessionStore
 })); //connect.sid
 
 //app.use(function (req, res, next) {
