@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>first socet</title>
+</head>
+<body>
+<p id="rss">rss</p>
+<p id="heapTotal">heapTotal</p>
+<p id="heapUsed">heapUsed</p>
+<script>
+    function updateStats(data) {
+        document.getElementById('rss').innerHTML = data.rss;
+        document.getElementById('heapTotal').innerHTML = data.heapTotal;
+        document.getElementById('heapUsed').innerHTML = data.heapUsed;
+    }
+
+    var ws = new WebSocket('ws://localhost:8080');
+
+    ws.onmessage = function (event) {
+        updateStats(JSON.parse(event.data));
+    };
+
+    ws.onopen = function () {
+        console.log('Connection in action');
+    };
+
+    ws.onclose = function (event) {
+        if (event.wasClean) {
+            console.log('Connection was closed sucsessfuly');
+        } else {
+            console.log('Connection was brocken');
+        }
+
+        console.log('Code: ' + event.code + '; Reasone: ' + event.reason);
+    };
+
+    ws.onerror = function (error) {
+        console.log('Error: ' + error.message);
+    };
+</script>
+</body>
+
+</html>
