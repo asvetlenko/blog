@@ -1,5 +1,8 @@
 // set DEBUG=chat:* & npm start
 
+//cd D:\MongoDB\Server\3.2\bin\
+//mongod.exe --dbpath "D:\MongoDB\db" -v
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');

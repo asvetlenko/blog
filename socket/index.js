@@ -10,7 +10,9 @@ var sessionStore = require('./../common/sessionStore.js');
 var User = require('./../models/user').User;
 var HttpError = require('./../error').HttpError;
 var ObjectID = require('mongodb').ObjectID;
+var cookie = require('cookie');
 var cookieParser = require('cookie-parser');
+
 
 function loadSession(sid, callback) {
     sessionStore.load(sid, function (err, session) {
@@ -45,13 +47,12 @@ function loadUser(session, callback) {
 
 module.exports = function (server) {
     var io = require('socket.io')(server);
-
     io.set('origins', 'localhost:*');
 
     io.set('authorization', function (handshakeData, callback) {
         async.waterfall([
                 function (callback) {
-                    handshakeData.cookies = express.cookie.parser(handshakeData.headers.cookie || '');
+                    handshakeData.cookies = cookie.parse(handshakeData.headers.cookie || '');
                     var sidCookie = handshakeData.cookies[config.get('session:key')];
                     var sid = cookieParser.signedCookie(sidCookie, config.get('session:secret'));
 
@@ -130,3 +131,20 @@ module.exports = function (server) {
 
     return io;
 };
+
+
+/*
+ module.exports = function (server) {
+ var io = require('socket.io')(server);
+ io.set('origins', 'localhost:*');
+
+ io.on('connection', function (socket) {
+ socket.on('message', function (text, cb) {
+ socket.broadcast.emit('message', text);
+ cb({my: 123});
+ });
+ });
+
+ return io;
+ };
+ */
