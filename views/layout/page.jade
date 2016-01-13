@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+    head
+        title= title
+        link(rel='stylesheet', href='/libs/bower_components/bootstrap/dist/css/bootstrap.css')
+        link(rel='stylesheet', href='/css/app.css')
+
+        script(src='/libs/bower_components/jquery/dist/jquery.js')
+        script(src='/libs/bower_components/bootstrap/dist/js/bootstrap.js')
+    body
+        header= title
+        section(class='container')
+            h1= title
+            block content
+        footer=title

@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 
+/*
+ NODE_ENV=development;
+ DEBUG=blog:*;
+ NODE_PATH=.
+ -----------------
+ //D:/MongoDB/Server/3.2/bin/mongod.exe --dbpath "D:/MongoDB/db" -v
+ -----------------
+
+ */
+
 /**
  * Module dependencies.
  */
@@ -7,12 +17,14 @@
 var app = require('../app');
 var debug = require('debug')('blog:server');
 var http = require('http');
+var config = require('config')
+var log = require('common/log')(module);
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || config.get('port'));
 app.set('port', port);
 
 /**
