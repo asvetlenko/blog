@@ -3,3 +3,62 @@ extends layout/page
 block content
     h1 chat
     p Welcome to #{title}, you are #{user.get('username')}
+    div
+        ul
+        form
+            input(class='form-control', autocomplete='off', autofocus=true, placeholder='Message ....')
+
+    script.
+        var socket = io.connect('', {
+            'reconnection delay': 1
+        });
+        var input = $('#room input');
+        var ul = $('#room ul');
+        var form = $('#room form');
+
+        socket.on('message', function (username, text) {
+                    printMessage(username + ' > ' + text)
+                })
+                .on('leave', function (username) {
+                    printStatus(username + ' got out');
+                })
+                .on('join', function (username) {
+                    printStatus(username + ' entered to the chat');
+                })
+                .on('connect', function () {
+                    printStatus('Connection in action');
+                    form.on('submit', sendMessage);
+                })
+                .on('disconnect', function () {
+                    printStatus('Connection was loosing');
+                    form.off('submit', sendMessage);
+                    input.prop('disabled', true);
+                    // setTimeout(reconnect, 500);
+                })
+                .on('logout', function () {
+                    location.href = '/';
+                })
+                .on('error', function (reason) {
+                    printStatus('You got error and was disconected');
+                })
+                .on('reconnect_failed', function () {
+                    alert('Connetion was died for ages!!!!!');
+                });
+
+        function sendMessage() {
+            var text = input.val();
+            socket.emit('message', text, function () {
+                printMessage(text);
+            });
+
+            input.val('');
+            return false;
+        }
+
+        function printStatus(text) {
+            $('<li>').append($('<i>', {text: text})).appendTo(ul);
+        }
+
+        function printMessage(text) {
+            $('<li>', {text: text}).appendTo(ul);
+        }
