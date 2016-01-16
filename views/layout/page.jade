@@ -8,8 +8,9 @@ html(lang="en")
         script(src='/libs/bower_components/jquery/dist/jquery.js')
         script(src='/libs/bower_components/bootstrap/dist/js/bootstrap.js')
     body
-        header= title
+        include ./../partial/header.jade
+        include ./../partial/top-nav.jade
         section(class='container')
-            h1= title
+            h1 my title
             block content
-        footer=title
+        include ./../partial/footer.jade
