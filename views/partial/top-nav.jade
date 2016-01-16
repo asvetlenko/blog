@@ -8,7 +8,8 @@ nav(class=['navbar', 'navbar-default'], role='navigation')
     ul(class=['nav', 'navbar-nav', 'navbar-right'])
         if user
             li
-                a(href='/') Logout
+
+                    a(href='/logout') Logout
         else
             li
                 a(href='/login') Login

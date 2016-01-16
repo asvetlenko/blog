@@ -39,8 +39,10 @@ app.use(session({
     store: require('common/sessionStore.js')
 })); //connect.sid
 
-app.use(require('middleware/sendHttpError'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(require('middleware/sendHttpError'));
+app.use(require('middleware/loadUser.js'));
+
 
 require('routes/index')(app);
 
@@ -61,7 +63,7 @@ app.use(function (err, req, res, next) {
     if (err instanceof HttpError) {
         res.sendHttpError(err);
     } else if (app.get('env') === 'development') {
-        express.errorHendler()(err, req, res, next);
+        app.use(errorhandler());
     } else {
         log.error(err);
         err = new HttpError(500);
