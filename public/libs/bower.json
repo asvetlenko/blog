@@ -1,0 +1,23 @@
+{
+  "name": "chat",
+  "homepage": "https://github.com/asvetlenko/blog",
+  "authors": [
+    "alexey <asvetlenko@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "socket.io-client": "~1.4.4",
+    "jquery": "~2.2.0"
+  }
+}
