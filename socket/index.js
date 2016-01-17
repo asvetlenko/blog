@@ -45,6 +45,52 @@ function loadUser(session, callback) {
     });
 }
 
+function initSocketCallback(io){
+    io.sockets.on('session:reload', function (sid) {
+        //var clients = io.sockets.clients();
+        console.log('------------------');
+        console.dir(socket.request.user);
+        var username = socket.request.user.get('username');
+
+        clients.forEach(function (client) {
+            if (client.request.session.id !== sid) {
+                return;
+            }
+
+            loadSession(sid, function (err, session) {
+                if (err) {
+                    client.emit('error', 'server error');
+                    client.disconnect();
+                    return;
+                }
+
+                if (!session) {
+                    client.emit('logout');
+                    client.disconnect();
+                    return;
+                }
+
+                client.request.session = session;
+            });
+        });
+    });
+
+    io.sockets.on('connection', function (socket) {
+        var username = socket.request.user.get('username');
+        socket.broadcast.emit('join', username);
+
+
+        socket.on('message', function (text, cb) {
+            socket.broadcast.emit('message', username, text);
+            cb && cb({my: 123});
+        });
+
+        socket.on('disconnect', function () {
+            socket.broadcast.emit('leave', username);
+        });
+    });
+}
+
 module.exports = function (server) {
     var io = require('socket.io')(server);
     io.set('origins', 'localhost:*');
@@ -78,6 +124,7 @@ module.exports = function (server) {
             ],
             function (err) {
                 if (!err) {
+                    initSocketCallback(io);
                     return callback(null, true);
                 }
 
@@ -89,47 +136,7 @@ module.exports = function (server) {
             });
     });
 
-    io.sockets.on('session:reload', function (sid) {
-        //var clients = io.sockets.clients();
-        var username = socket.request.user.get('username');
 
-        clients.forEach(function (client) {
-            if (client.handshake.session.id !== sid) {
-                return;
-            }
-
-            loadSession(sid, function (err, session) {
-                if (err) {
-                    client.emit('error', 'server error');
-                    client.disconnect();
-                    return;
-                }
-
-                if (!session) {
-                    client.emit('logout');
-                    client.disconnect();
-                    return;
-                }
-
-                client.handshake.session = session;
-            });
-        });
-    });
-
-    io.sockets.on('connection', function (socket) {
-        var username = socket.handshake.user.get('username');
-        socket.broadcast.emit('join', username);
-
-
-        socket.on('message', function (text, cb) {
-            socket.broadcast.emit('message', username, text);
-            cb && cb({my: 123});
-        });
-
-        socket.on('disconnect', function () {
-            socket.broadcast.emit('leave', username);
-        });
-    });
 
     return io;
 };
