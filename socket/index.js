@@ -50,8 +50,6 @@ module.exports = function (server) {
     io.set('origins', 'localhost:*');
     io.set('logger', log);
 
-    return io;
-
     io.set('authorization', function (handshakeData, callback) {
         async.waterfall([
                 function (callback) {
