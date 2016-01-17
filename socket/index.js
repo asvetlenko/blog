@@ -90,7 +90,8 @@ module.exports = function (server) {
     });
 
     io.sockets.on('session:reload', function (sid) {
-        var clients = io.sockets.clients();
+        //var clients = io.sockets.clients();
+        var username = socket.request.user.get('username');
 
         clients.forEach(function (client) {
             if (client.handshake.session.id !== sid) {
