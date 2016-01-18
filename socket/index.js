@@ -47,9 +47,6 @@ function loadUser(session, callback) {
 
 function initSocketCallback(io){
     io.sockets.on('session:reload', function (sid) {
-        //var clients = io.sockets.clients();
-        console.log('------------------');
-        console.dir(socket.request.user);
         var username = socket.request.user.get('username');
 
         clients.forEach(function (client) {
@@ -135,8 +132,5 @@ module.exports = function (server) {
                 callback(err);
             });
     });
-
-
-
     return io;
 };
